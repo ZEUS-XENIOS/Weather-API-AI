@@ -5,9 +5,9 @@ from sklearn.linear_model import LinearRegression
 import requests
 from datetime import datetime
 
-st.title("Weather Prediction Dashboard")
+st.title("🌦️ Live Weather Prediction Dashboard")
 
-API_KEY = "YOUR_OPENWEATHER_API_KEY"
+API_KEY = "a1aed98b3eb3b4bc029ec813a672de81"
 CITY = "Bangalore"
 
 url = f"https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric"
@@ -15,38 +15,44 @@ url = f"https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}
 response = requests.get(url)
 data = response.json()
 
-temp = data["main"]["temp"]
-humidity = data["main"]["humidity"]
-condition = data["weather"][0]["main"]
+# SAFE API handling
+if "main" in data:
 
-new_row = {
-    "timestamp": datetime.now(),
-    "city": CITY,
-    "temp": temp,
-    "humidity": humidity,
-    "condition": condition
-}
+    temp = data["main"]["temp"]
+    humidity = data["main"]["humidity"]
+    condition = data["weather"][0]["main"]
 
-df_live = pd.DataFrame([new_row])
-df_live.to_csv("weather_history.csv", mode="a", header=False, index=False)
+    new_row = {
+        "timestamp": datetime.now(),
+        "city": CITY,
+        "temp": temp,
+        "humidity": humidity,
+        "condition": condition
+    }
 
+    df_live = pd.DataFrame([new_row])
+    df_live.to_csv("weather_history.csv", mode="a", header=False, index=False)
+
+else:
+    st.error(f"API Error → {data}")
+
+# LOAD DATASET
 df = pd.read_csv("weather_history.csv")
 
-# convert timestamp column properly
 df["timestamp"] = pd.to_datetime(df["timestamp"])
-
-# sort by time
 df = df.sort_values("timestamp")
-
-# set time as index for graph
 df = df.set_index("timestamp")
 
-st.subheader("Historical Data")
+# LIMIT SIZE (important for cloud)
+df = df.tail(100)
+
+st.subheader("📊 Historical Weather Data")
 st.dataframe(df)
 
-st.subheader("Temperature Trend")
+st.subheader("🌡️ Temperature Trend")
 st.line_chart(df["temp"])
 
+# ML MODEL
 df["day_index"] = range(len(df))
 
 X = df[["day_index"]]
@@ -58,5 +64,5 @@ model.fit(X, y)
 future_day = np.array([[len(df) + 1]])
 prediction = model.predict(future_day)[0]
 
-st.subheader("Predicted Next Temperature")
+st.subheader("🔮 Predicted Next Temperature")
 st.success(f"{prediction:.2f} °C")
