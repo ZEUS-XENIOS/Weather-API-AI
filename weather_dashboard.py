@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 
 st.title("Weather Prediction Dashboard")
-df = pd.read_csv("weather_data.csv")
+df = pd.read_csv("weather_history.csv")
 
 # convert date column properly
 df["date"] = pd.to_datetime(df["date"])
