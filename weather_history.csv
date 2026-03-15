@@ -1,1 +1,5 @@
-"timestamp,city,temp,humidity,condition"	 city	temp 	humidity	condition
+timestamp,city,temp,humidity,condition
+2026-03-15 09:00:00,Bangalore,27,65,Cloudy
+2026-03-15 10:00:00,Bangalore,29,60,Sunny
+2026-03-15 11:00:00,Bangalore,31,55,Sunny
+2026-03-15 12:00:00,Bangalore,32,50,Sunny
