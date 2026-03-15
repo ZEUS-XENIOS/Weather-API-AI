@@ -20,12 +20,12 @@ st.subheader("Historical Data")
 st.dataframe(df)
 
 st.subheader("Temperature Trend")
-st.line_chart(df["temperature"])
+st.line_chart(df["temp"])
 
 df["day_index"] = range(len(df))
 
 X = df[["day_index"]]
-y = df["temperature"]
+y = df["temp"]
 
 model = LinearRegression()
 model.fit(X, y)
